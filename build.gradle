@@ -1,0 +1,103 @@
+// https://central.sonatype.org/pages/gradle.html
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+tasks.withType(Javadoc) { options.encoding = "UTF-8" }
+tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
+
+group = 'com.github.myibu'
+archivesBaseName = "spring-boot-starter-map-web"
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework:spring-core:5.2.9.RELEASE'
+    implementation 'org.springframework:spring-context:5.2.9.RELEASE'
+    implementation 'org.springframework:spring-web:5.2.9.RELEASE'
+    implementation 'org.springframework.boot:spring-boot:2.3.4.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:2.3.4.RELEASE'
+
+    compile group: 'org.json', name: 'json', version: '20160212'
+    implementation ('com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.7')
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.3.4.RELEASE")
+    testImplementation ("org.springframework.boot:spring-boot-starter:2.3.4.RELEASE")
+    testImplementation ("org.springframework.boot:spring-boot-starter-web:2.3.4.RELEASE")
+}
+
+group = 'com.github.myibu'
+archivesBaseName = "spring-boot-starter-map-web"
+version = "1.0.0"
+
+jar.enabled = true
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'spring-boot-starter-map-web'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'web service api of map, with spring-boot-starter'
+                url 'https://github.com/myibu/spring-boot-starter-map-web'
+
+                scm {
+                    connection 'scm:svn:http://foo.googlecode.com/svn/trunk/'
+                    developerConnection 'scm:svn:https://foo.googlecode.com/svn/trunk/'
+                    url 'http://foo.googlecode.com/svn/trunk/'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'myibu'
+                        name 'myibu'
+                        email '1337078409@qq.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+jar.enabled = true

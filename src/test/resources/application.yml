@@ -1,0 +1,8 @@
+server:
+  port: 9999
+spring:
+  mapweb:
+    amap:
+      enabled: true
+      host: https://restapi.amap.com
+      appKey: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
